@@ -1,10 +1,23 @@
 using ChatApp.Hubs; // Bu namespace projenizin ana namespace'i ve Hubs klasörünün adýdýr.
-                    // Eðer Hubs klasörü yoksa veya ana namespace farklýysa burayý doðru ayarlayýn.
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using ChatApp.Models; // Kendi user modelinizin bulunduðu namespace
+using ChatApp.Data; // Kendi DbContext'inizin bulunduðu namespace
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddIdentity<User, IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>()
+    .AddDefaultTokenProviders();
 
 // SignalR servisini ekle
 builder.Services.AddSignalR();
